@@ -11,11 +11,12 @@ Use
 import idg "github.com/thiinbit/idgen4go"
 
 // Generate a new ID
-id := idg.Next() // 10361665786741541
+id, _ := idg.Next() // 10361665786741541
 
 // Get the ID generation time （int64 timestamp of millis）
-idTimestamp = idg.ExtractTimestamp(id) // 1580307213634
+idTimestamp := idg.ExtractTimestamp(id) // 1580307213634
 
+fmt.Println(id, idTimestamp)
 ```
 ## Speed
 It takes about 2.9150176646s to generate 4000000 (4 million) IDs. (use MacBookPro13,2018)      
@@ -136,3 +137,5 @@ The generated ID example:
 10360027789394112   
 10360027789394116   
 ```
+
+

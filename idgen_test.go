@@ -5,6 +5,7 @@
 package idgen
 
 import (
+	"fmt"
 	"log"
 	"runtime"
 	"testing"
@@ -18,6 +19,18 @@ func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU() + 1)
 }
 
+// TestUsage usage test
+func TestUsage(t *testing.T) {
+	// Generate a new ID
+	id, _ := Next()
+
+	// Get the ID generation time （int64 timestamp of millis）
+	idTimestamp := ExtractTimestamp(id)
+
+	fmt.Println(id, idTimestamp)
+}
+
+// TestNext
 func TestNext(t *testing.T) {
 	testSize := 4000000
 	printSize := 100
@@ -72,6 +85,7 @@ func TestNext(t *testing.T) {
 	// })
 }
 
+// TestExtractTimestamp
 func TestExtractTimestamp(t *testing.T) {
 	testSize := 1000000
 
