@@ -10,7 +10,7 @@ import (
 )
 
 // 41bit time + 10bt machine + 11bit seq + 1bit chan = 63bit
-// time use millids
+// time use millis
 const sequenceBits = 11
 
 // Using two channels to average the probability of odd and even tail numbers
@@ -55,16 +55,14 @@ var gen0 = &generator{lastTimestamp: getTimestamp(), sequence: 0, genNum: 0}
 var gen1 = &generator{lastTimestamp: getTimestamp(), sequence: 0, genNum: 1}
 
 func init() {
-	go func() {
-		genChan <- gen0
-		genChan <- gen1
-	}()
+	genChan <- gen0
+	genChan <- gen1
 }
 
 // Next ID number
 func Next() (int64, error) {
 	_g := <-genChan
-	defer func() { go func() { genChan <- _g }() }()
+	defer func() { genChan <- _g }()
 
 	if getTimestamp() < _g.lastTimestamp {
 		return 0, errors.New("clock move backwards")

@@ -32,6 +32,7 @@ func TestUsage(t *testing.T) {
 
 // TestNext
 func TestNext(t *testing.T) {
+	runTimes := 3
 	testSize := 4000000
 	printSize := 100
 	checkDuplicate := false
@@ -40,39 +41,45 @@ func TestNext(t *testing.T) {
 	// var lock sync.RWMutex
 
 	counter := make(map[int64]int)
-	start := time.Now()
 
-	for i := 0; i < testSize; i++ {
+	timeCount := time.Duration(0)
+	for rt := 0; rt < runTimes; rt++ {
+		start := time.Now()
 
-		// wg.Add(1)
-		// go func(wg *sync.WaitGroup, idx int) {
-		// defer wg.Done()
+		for i := 0; i < testSize; i++ {
 
-		id, err := Next()
-		// _, err := Next()
-		if err != nil {
-			t.Fatal(err)
-		}
+			// wg.Add(1)
+			// go func(wg *sync.WaitGroup, idx int) {
+			// defer wg.Done()
 
-		if checkDuplicate {
-			// lock.Lock()
-			counter[id]++
-			// if idx < printSize {
-			if i < printSize {
-				t.Log(id)
+			id, err := Next()
+			// _, err := Next()
+			if err != nil {
+				t.Fatal(err)
 			}
-			// lock.Unlock()
+
+			if checkDuplicate {
+				// lock.Lock()
+				counter[id]++
+				// if idx < printSize {
+				if i < printSize {
+					t.Log(id)
+				}
+				// lock.Unlock()
+			}
+
+			// val, _ := counter.LoadOrStore(id, 0)
+			// counter.Store(id, val.(int)+1)
+			// }(&wg, i)
 		}
 
-		// val, _ := counter.LoadOrStore(id, 0)
-		// counter.Store(id, val.(int)+1)
-		// }(&wg, i)
+		elapsed := time.Since(start)
+		t.Log("Elapsed: ", elapsed)
+		timeCount += elapsed
 	}
 
+	t.Log("AverageElapsed: ", timeCount.Seconds() / float64(runTimes))
 	// wg.Wait()
-
-	elapsed := time.Since(start)
-	t.Log("Elapsed: ", elapsed)
 
 	// counter.Range(func(k, v interface{}) bool {
 	for k, v := range counter {
