@@ -6,6 +6,7 @@ package idgen
 
 import (
 	"errors"
+	"sync"
 	"time"
 )
 
@@ -16,7 +17,7 @@ const sequenceBits = 11
 // Using two channels to average the probability of odd and even tail numbers
 // and improve performance
 const chanBits = 1
-const machineIDBits = 10
+const machineIDBits = 10 //
 const timeBits = 41
 
 // 1
@@ -29,16 +30,21 @@ const machineIDShift = sequenceBits + sequenceShift
 const timeShift = machineIDBits + machineIDShift
 
 // 00000000 00000000 00000000 00000000 00000000 00000000 00001111 11111110
-const sequenceMask int64 = 4094
+const sequenceMask int64 = 0xFFE
+
+// 00000000 00000000 00000000 00000000 00000000 00111111 11110000 00000000
+const machineMask int64 = 0x3FF000
 
 // 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000001
-const chanMask int64 = 1
+const chanMask int64 = 0x01
 
 // TODO: Put into configuration later
-const thisMachineID = 0
+var thisMachineID int64 = 0
 
 // timestamp of 2020,01,01 00:00:00:000 UTC
 const sinceTime = 1577836800000
+
+var mu sync.Mutex
 
 type generator struct {
 	lastTimestamp int64
@@ -57,6 +63,14 @@ var gen1 = &generator{lastTimestamp: getTimestamp(), sequence: 0, genNum: 1}
 func init() {
 	genChan <- gen0
 	genChan <- gen1
+}
+
+// SetMachineID (only need set once on startup)
+func SetMachineID(mID int) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	thisMachineID = int64(mID)
 }
 
 // Next ID number
@@ -87,6 +101,11 @@ func Next() (int64, error) {
 // ExtractTimestamp from ID
 func ExtractTimestamp(seq int64) int64 {
 	return sinceTime + (seq >> timeShift)
+}
+
+// ExtractMachineID from ID
+func ExtractMachine(seq int64) int {
+	return int((seq & machineMask) >> machineIDShift)
 }
 
 func getTimestamp() int64 {

@@ -78,7 +78,7 @@ func TestNext(t *testing.T) {
 		timeCount += elapsed
 	}
 
-	t.Log("AverageElapsed: ", timeCount.Seconds() / float64(runTimes))
+	t.Log("AverageElapsed: ", timeCount.Seconds()/float64(runTimes))
 	// wg.Wait()
 
 	// counter.Range(func(k, v interface{}) bool {
@@ -106,4 +106,35 @@ func TestExtractTimestamp(t *testing.T) {
 	}
 
 	t.Log("Finished! Elapsed ", time.Since(start))
+}
+
+func TestExtractMachine(t *testing.T) {
+	SetMachineID(128)
+	n, _ := Next()
+
+	if 128 != ExtractMachine(n) {
+		t.Fatal("F")
+	}
+
+	SetMachineID(1024)
+	n1, _ := Next()
+	if 1024 == ExtractMachine(n1) || 0 != ExtractMachine(n1){
+		log.Fatal("overflow")
+	}
+
+	for i := 0; i < 1024; i++ {
+		SetMachineID(i)
+
+		nextID, err := Next()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		mID := ExtractMachine(nextID)
+
+		if i != mID {
+			t.Fatalf("id %d, machine: %d, expect: %d", nextID, mID, i)
+		}
+	}
+
 }
