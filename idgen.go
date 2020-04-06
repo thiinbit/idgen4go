@@ -109,7 +109,7 @@ func ExtractMachine(seq int64) int {
 }
 
 // Hash
-func Mod(id int64, m int) int {
+func Mod(id int64, m int64) int64 {
 	return ExtractTimestamp(id) % m
 }
 
