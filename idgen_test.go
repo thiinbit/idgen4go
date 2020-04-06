@@ -118,7 +118,7 @@ func TestExtractMachine(t *testing.T) {
 
 	SetMachineID(1024)
 	n1, _ := Next()
-	if 1024 == ExtractMachine(n1) || 0 != ExtractMachine(n1){
+	if 1024 == ExtractMachine(n1) || 0 != ExtractMachine(n1) {
 		log.Fatal("overflow")
 	}
 
@@ -136,5 +136,16 @@ func TestExtractMachine(t *testing.T) {
 			t.Fatalf("id %d, machine: %d, expect: %d", nextID, mID, i)
 		}
 	}
+}
 
+func TestMod(t *testing.T) {
+	modReArr := [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+
+	for i := 0; i < 800000; i++ {
+		n, _ := Next()
+		m := Mod(n, 8)
+		modReArr[m] += 1
+	}
+
+	log.Print(modReArr)
 }

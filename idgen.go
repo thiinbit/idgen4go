@@ -108,6 +108,11 @@ func ExtractMachine(seq int64) int {
 	return int((seq & machineMask) >> machineIDShift)
 }
 
+// Hash
+func Mod(id int64, m int64) int64 {
+	return ExtractTimestamp(id) % m
+}
+
 func getTimestamp() int64 {
 	return time.Now().UnixNano() / 1e6
 }
