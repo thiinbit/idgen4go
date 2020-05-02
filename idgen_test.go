@@ -139,12 +139,23 @@ func TestExtractMachine(t *testing.T) {
 }
 
 func TestMod(t *testing.T) {
-	modReArr := [8]int{0, 0, 0, 0, 0, 0, 0, 0}
+	modReArr := [4095]int{0}
+	var m int64 = 64
 
-	for i := 0; i < 800000; i++ {
+	for i := 0; i < 4000000; i++ {
 		n, _ := Next()
-		m := Mod(n, 8)
-		modReArr[m] += 1
+		mIdx, _ := Mod(n, m)
+		modReArr[mIdx] += 1
+
+		uuid := UUID(n)
+		umIdx, err := ModUUID(uuid, m)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if mIdx != umIdx {
+			t.Fatal("mIdx err")
+		}
 	}
 
 	log.Print(modReArr)

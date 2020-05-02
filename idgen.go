@@ -6,6 +6,9 @@ package idgen
 
 import (
 	"errors"
+	"fmt"
+	uuid "github.com/satori/go.uuid"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -108,11 +111,50 @@ func ExtractMachine(seq int64) int {
 	return int((seq & machineMask) >> machineIDShift)
 }
 
-// Hash
-func Mod(id int64, m int64) int64 {
-	return ExtractTimestamp(id) % m
-}
-
 func getTimestamp() int64 {
 	return time.Now().UnixNano() / 1e6
+}
+
+// === --- === --- ===
+//  Hash about method
+// === --- === --- ===
+
+const (
+	hashMask = 0xFFF // Range 0~4095
+)
+
+// Mod return the id's timestamp mod m (m in the range of hashMask)
+func Mod(id int64, m int64) (int64, error) {
+	if m > hashMask {
+		return 0, errors.New("exceed max m 0xFFF")
+	}
+
+	return (ExtractTimestamp(id) & hashMask) % m, nil
+}
+
+// UUID return a UUID with the same mod result as id
+func UUID(id int64) string {
+	hashB := ExtractTimestamp(id) & hashMask
+
+	//fmt.Sprintf("%X", i)
+	hashBStr := fmt.Sprintf("%03x", hashB)
+
+	return hashBStr + uuid.Must(uuid.NewV4()).String()
+}
+
+// ModUUID return uuid mod m
+func ModUUID(uuid string, m int64) (int64, error) {
+	if m > hashMask {
+		return 0, errors.New("exceed max m 0xFFF")
+	}
+
+	hashB := uuid[:3]
+
+	i64, err := strconv.ParseInt(hashB, 16, 64)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return i64 % m, nil
 }
