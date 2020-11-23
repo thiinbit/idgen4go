@@ -6,6 +6,8 @@ package idgen
 
 import (
 	"fmt"
+	"github.com/google/uuid"
+	suuid "github.com/satori/go.uuid"
 	"log"
 	"runtime"
 	"testing"
@@ -159,4 +161,10 @@ func TestMod(t *testing.T) {
 	}
 
 	log.Print(modReArr)
+}
+
+func TestUUID(t *testing.T) {
+	log.Println(uuid.Must(uuid.NewRandom()).String())
+
+	log.Println(suuid.Must(suuid.NewV4()).String())
 }

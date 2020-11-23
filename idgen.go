@@ -7,7 +7,7 @@ package idgen
 import (
 	"errors"
 	"fmt"
-	uuid "github.com/satori/go.uuid"
+	"github.com/google/uuid"
 	"strconv"
 	"sync"
 	"time"
@@ -139,7 +139,7 @@ func UUID(id int64) string {
 	//fmt.Sprintf("%X", i)
 	hashBStr := fmt.Sprintf("%03x", hashB)
 
-	return hashBStr + uuid.Must(uuid.NewV4()).String()
+	return hashBStr + uuid.Must(uuid.NewRandom()).String()
 }
 
 // ModUUID return uuid mod m
