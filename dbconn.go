@@ -8,12 +8,10 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-
-	plog "github.com/thiinbit/plog4go"
+	"log"
 )
 
 const (
-	seqDbLog       = "db-seq.log"
 	driverName     = "mysql"
 	dataSourceName = "root:root@/?parseTime=true&loc=Local"
 )
@@ -51,7 +49,7 @@ func Exec(runSql string, args ...interface{}) (re sql.Result, err error) {
 	checkErr(err)
 
 	re, err = stmt.Exec(args...)
-	plog.Print("[SEQ_GEN] Run Exec SQL: ", runSql, args)
+	log.Print("[SEQ_GEN] Run Exec SQL: ", runSql, args)
 	checkErr(err)
 
 	return re, err
@@ -68,7 +66,7 @@ func Query(runSql string, args ...interface{}) (rows *sql.Rows, err error) {
 	checkErr(err)
 
 	rows, err = stmt.Query(args...)
-	plog.Print("[SEQ_GEN] Run Query SQL: ", runSql, args)
+	log.Print("[SEQ_GEN] Run Query SQL: ", runSql, args)
 	checkErr(err)
 
 	defer stmt.Close()
@@ -86,7 +84,7 @@ func QueryRow(runSql string, args ...interface{}) (row *sql.Row, err error) {
 	checkErr(err)
 
 	row = stmt.QueryRow(args...)
-	plog.Print("[SEQ_GEN] Run Query SQL: ", runSql, args)
+	log.Print("[SEQ_GEN] Run Query SQL: ", runSql, args)
 	checkErr(err)
 
 	defer stmt.Close()

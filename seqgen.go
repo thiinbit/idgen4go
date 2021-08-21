@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	sequenceIncrCache = cache.New(7*24*time.Hour, 6*time.Hour)
-	sequenceMaxCache  = cache.New(7*24*time.Hour, 6*time.Hour)
+	sequenceIncrCache = cache.New(7*24*time.Hour, 24*time.Hour)
+	sequenceMaxCache  = cache.New(7*24*time.Hour, 24*time.Hour)
 	seqIncrMu         sync.Mutex
 )
 
